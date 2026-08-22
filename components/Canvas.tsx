@@ -19,11 +19,17 @@ function tilesFromRecords(records: TextRecord[]): Tiles {
 	return tiles;
 }
 
-// Stable per-user color: hash the DID to a hue. Same DID -> same color everywhere.
+// Stable per-user color: FNV-1a hash of the DID, spread around the hue wheel
+// by the golden angle so similar DIDs don't end up with similar colors.
 function colorForDid(did: string): string {
-	let h = 0;
-	for (let i = 0; i < did.length; i++) h = (h * 31 + did.charCodeAt(i)) | 0;
-	return `hsl(${Math.abs(h) % 360}, 85%, 65%)`;
+	let h = 0x811c9dc5;
+	for (let i = 0; i < did.length; i++) {
+		h ^= did.charCodeAt(i);
+		h = Math.imul(h, 0x01000193) >>> 0;
+	}
+	const hue = Math.round((h * 137.508) % 360);
+	const light = 60 + (h % 3) * 7; // 60 / 67 / 74
+	return `hsl(${hue}, 90%, ${light}%)`;
 }
 
 export function Canvas({

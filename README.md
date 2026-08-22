@@ -52,6 +52,24 @@ regenerates the lexicon TypeScript before starting Next.
 | `WORLD_MEMBERS` | comma-separated handles or DIDs to include in the world even if they haven't logged in here |
 | `PUBLIC_URL`, `PRIVATE_KEY` | only for a deployed instance (real OAuth client instead of loopback); generate a key with `pnpm gen-key` |
 
+## Deploying (Docker + reverse proxy)
+
+Use a **subdomain**, not a path: the OAuth client, `/.well-known/jwks.json`,
+and the API routes all assume the app owns the origin.
+
+On the server:
+
+```sh
+git clone git@github.com:hobg0blin/ourworldsoftext.git && cd ourworldsoftext
+cp .env.production.template .env.production   # set PUBLIC_URL + PRIVATE_KEY
+docker compose up -d --build                  # app on 127.0.0.1:3000, SQLite in ./data
+```
+
+Add a DNS A record for the subdomain, then point your proxy at 127.0.0.1:3000:
+`deploy/Caddyfile-snippet` (Caddy, e.g. alongside a self-hosted PDS — certs are
+automatic) or `deploy/nginx-owot.conf` (nginx + certbot). Redeploy with
+`git pull && docker compose up -d --build`.
+
 ## Notes
 
 - Each member's records are fetched live, so the page is as slow as the slowest

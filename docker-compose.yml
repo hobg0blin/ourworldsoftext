@@ -1,0 +1,11 @@
+# Production: build and run behind your existing reverse proxy.
+#   docker compose up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file: .env.production
+    volumes:
+      - ./data:/data

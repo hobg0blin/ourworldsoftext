@@ -1,0 +1,7 @@
+# Append to the PDS Caddyfile (official installer: /pds/caddy/etc/caddy/Caddyfile).
+# The installer runs Caddy with network_mode: host, so 127.0.0.1:3000 is the app
+# container's published port. If your Caddy is NOT host-networked, use
+# host.docker.internal:3000 instead.
+owot.bront.rodeo {
+    reverse_proxy 127.0.0.1:3000
+}
