@@ -1,0 +1,30 @@
+{
+  "id": "com.ourworldsoftext.text",
+  "defs": {
+    "main": {
+      "key": "tid",
+      "type": "record",
+      "record": {
+        "type": "object",
+        "required": ["text", "xPosition", "yPosition", "createdAt"],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "xPosition": {
+            "type": "integer"
+          },
+          "yPosition": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  },
+  "$type": "com.atproto.lexicon.schema",
+  "lexicon": 1
+}
