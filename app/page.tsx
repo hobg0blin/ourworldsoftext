@@ -34,7 +34,7 @@ export default async function Home() {
 								<LogoutButton />
 							</div>
 							{/* <TextTester /> */}
-							<Canvas />
+							<Canvas initialTexts={worldTexts} viewerDid={session?.did} />
 						</>
 					) : (
 						<LoginForm />

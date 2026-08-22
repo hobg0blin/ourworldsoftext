@@ -1,10 +1,42 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { TextRecord } from '@/lib/world';
 
-export function Canvas() {
+type Tile = { ch: string; did: string };
+type Tiles = Record<string, Tile>;
+
+const POLL_MS = 3000;
+
+// Records are newest-first; place oldest first so later text overwrites earlier.
+function tilesFromRecords(records: TextRecord[]): Tiles {
+	const tiles: Tiles = {};
+	for (const r of [...records].reverse()) {
+		[...r.text].forEach((ch, i) => {
+			tiles[`${r.xPosition + i},${r.yPosition}`] = { ch, did: r.authorDid };
+		});
+	}
+	return tiles;
+}
+
+// Stable per-user color: hash the DID to a hue. Same DID -> same color everywhere.
+function colorForDid(did: string): string {
+	let h = 0;
+	for (let i = 0; i < did.length; i++) h = (h * 31 + did.charCodeAt(i)) | 0;
+	return `hsl(${Math.abs(h) % 360}, 85%, 65%)`;
+}
+
+export function Canvas({
+	initialTexts = [],
+	viewerDid,
+}: {
+	initialTexts?: TextRecord[];
+	viewerDid?: string;
+}) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [tiles, setTiles] = useState<Record<string, string>>({});
+	const [tiles, setTiles] = useState<Tiles>(() =>
+		tilesFromRecords(initialTexts),
+	);
 	const [active, setActive] = useState<{ col: number; row: number } | null>(
 		null,
 	);
@@ -48,11 +80,11 @@ export function Canvas() {
 			ctx.fillRect(active.col * cw, active.row * charHeight, cw, charHeight);
 		}
 
-		// draw characters
-		ctx.fillStyle = '#0f0';
+		// draw characters, colored by author
 		for (const key in tiles) {
 			const [col, row] = key.split(',').map(Number);
-			ctx.fillText(tiles[key], col * cw, row * charHeight);
+			ctx.fillStyle = colorForDid(tiles[key].did);
+			ctx.fillText(tiles[key].ch, col * cw, row * charHeight);
 		}
 	};
 
@@ -77,6 +109,30 @@ export function Canvas() {
 		draw();
 	}, [tiles, active]);
 
+	// Poll the world so other people's text shows up as they type.
+	// Remote state wins for cells it knows about; cells typed locally but not
+	// yet visible on a PDS are kept so your own typing doesn't flicker.
+	useEffect(() => {
+		let stop = false;
+		const tick = async () => {
+			try {
+				const res = await fetch('/api/world', { cache: 'no-store' });
+				if (!res.ok) return;
+				const { texts } = (await res.json()) as { texts: TextRecord[] };
+				if (stop) return;
+				const remote = tilesFromRecords(texts);
+				setTiles((prev) => ({ ...prev, ...remote }));
+			} catch {
+				// network hiccup; try again next tick
+			}
+		};
+		const id = setInterval(tick, POLL_MS);
+		return () => {
+			stop = true;
+			clearInterval(id);
+		};
+	}, []);
+
 	const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
@@ -93,8 +149,11 @@ export function Canvas() {
 		if (e.key.length !== 1) return; // ignore Shift, Enter, etc.
 
 		const key = `${active.col},${active.row}`;
-		setTiles((prev) => ({ ...prev, [key]: e.key }));
-        post(e.key, active.row, active.col)
+		setTiles((prev) => ({
+			...prev,
+			[key]: { ch: e.key, did: viewerDid ?? 'me' },
+		}));
+		post(e.key, active.col, active.row);
 
 		// advance to next tile, wrapping to next row
 		const { cols, rows } = gridSize.current;
@@ -115,7 +174,7 @@ export function Canvas() {
 		await fetch('/api/text', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ char, xPosition: x, yPosition: y }),
+			body: JSON.stringify({ text: char, xPosition: x, yPosition: y }),
 		});
 	}
 
