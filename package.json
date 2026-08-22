@@ -16,7 +16,6 @@
     "@atproto/lex": "^0.2.2",
     "@atproto/oauth-client-node": "^0.4.8",
     "@atproto/syntax": "^0.7.2",
-    "@atproto/tap": "^0.3.8",
     "better-sqlite3": "^12.11.1",
     "kysely": "^0.29.3",
     "next": "16.2.10",

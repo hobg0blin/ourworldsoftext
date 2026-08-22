@@ -1,15 +1,21 @@
 import { getSession } from "@/lib/auth/session";
+import { listWorldTexts } from "@/lib/world";
 import { LoginForm } from "@/components/LoginForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { TextTester } from "@/components/TextTester";
+import { TextList } from "@/components/TextList";
 
 export default async function Home() {
   const session = await getSession();
+  const worldTexts = await listWorldTexts(session?.did);
+  const myTexts = session
+    ? worldTexts.filter((t) => t.authorDid === session.did)
+    : [];
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-      <main className="w-full max-w-xl mx-auto p-8">
-        <div className="text-center mb-8">
+      <main className="w-full max-w-xl mx-auto p-8 space-y-6">
+        <div className="text-center">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
             Our World of Text
           </h1>
@@ -33,6 +39,20 @@ export default async function Home() {
             <LoginForm />
           )}
         </div>
+
+        {session && (
+          <TextList
+            title="My text"
+            texts={myTexts}
+            empty="You haven't posted any text yet."
+          />
+        )}
+
+        <TextList
+          title="Everyone's text"
+          texts={worldTexts}
+          empty="Nothing in the world yet. Log in and post something."
+        />
       </main>
     </div>
   );

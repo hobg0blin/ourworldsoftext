@@ -48,6 +48,49 @@ const migrations: Record<string, Migration> = {
       await db.schema.dropTable("auth_state").execute();
     },
   },
+  "002": {
+    async up(db: Kysely<unknown>) {
+      await db.schema.dropTable("status").ifExists().execute();
+      await db.schema
+        .createTable("text")
+        .addColumn("uri", "text", (col) => col.primaryKey())
+        .addColumn("authorDid", "text", (col) => col.notNull())
+        .addColumn("text", "text", (col) => col.notNull())
+        .addColumn("xPosition", "integer", (col) => col.notNull())
+        .addColumn("yPosition", "integer", (col) => col.notNull())
+        .addColumn("createdAt", "text", (col) => col.notNull())
+        .addColumn("indexedAt", "text", (col) => col.notNull())
+        .execute();
+      await db.schema
+        .createIndex("text_author_idx")
+        .on("text")
+        .columns(["authorDid", "createdAt"])
+        .execute();
+    },
+    async down(db: Kysely<unknown>) {
+      await db.schema.dropTable("text").execute();
+    },
+  },
+  "003": {
+    async up(db: Kysely<unknown>) {
+      await db.schema.dropTable("text").ifExists().execute();
+      await db.schema.dropTable("account").ifExists().execute();
+    },
+    async down() {},
+  },
+  "004": {
+    async up(db: Kysely<unknown>) {
+      await db.schema
+        .createTable("member")
+        .addColumn("did", "text", (col) => col.primaryKey())
+        .addColumn("firstSeen", "text", (col) => col.notNull())
+        .addColumn("lastSeen", "text", (col) => col.notNull())
+        .execute();
+    },
+    async down(db: Kysely<unknown>) {
+      await db.schema.dropTable("member").execute();
+    },
+  },
 };
 
 export function getMigrator() {

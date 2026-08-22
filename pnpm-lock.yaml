@@ -17,9 +17,6 @@ dependencies:
   '@atproto/syntax':
     specifier: ^0.7.2
     version: 0.7.2
-  '@atproto/tap':
-    specifier: ^0.3.8
-    version: 0.3.8
   better-sqlite3:
     specifier: ^12.11.1
     version: 12.11.1
@@ -396,31 +393,6 @@ packages:
     dependencies:
       iso-datestring-validator: 2.2.2
       tslib: 2.8.1
-    dev: false
-
-  /@atproto/tap@0.3.8:
-    resolution: {integrity: sha512-9F0GBSEFBJmGbH6CAJ9yzX2fkdUACOrsXaITwq2b75lHiZYcKibLvp5k0K7+TW8WtSSr2/RbIVptPQnLK5JIvQ==}
-    engines: {node: '>=22'}
-    dependencies:
-      '@atproto/common': 0.7.2
-      '@atproto/lex': 0.2.2
-      '@atproto/syntax': 0.7.2
-      '@atproto/ws-client': 0.1.7
-      ws: 8.21.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@atproto/ws-client@0.1.7:
-    resolution: {integrity: sha512-Ghj54G+1qN79GwFt/F2tqpKkCiil9L+e7gYGe4ipuwbnwpEw7jiuM1e+L+5PN/Jwc0O0bNMoglR6vDxpXtetEA==}
-    engines: {node: '>=22'}
-    dependencies:
-      '@atproto/common': 0.7.2
-      ws: 8.21.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
     dev: false
 
   /@atproto/xrpc@0.8.6:
@@ -4814,19 +4786,6 @@ packages:
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
-    dev: false
-
-  /ws@8.21.0:
-    resolution: {integrity: sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
     dev: false
 
   /y18n@5.0.8:

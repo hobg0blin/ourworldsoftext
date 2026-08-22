@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-type ListResponse = {
-  records: { uri: string; cid: string; value: Record<string, unknown> }[];
-};
+type ListResponse = { texts: Record<string, unknown>[] };
 
 export function TextTester() {
+  const router = useRouter();
   const [text, setText] = useState("hello world");
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [records, setRecords] = useState<ListResponse["records"] | null>(null);
+  const [records, setRecords] = useState<ListResponse["texts"] | null>(null);
 
   async function post() {
     setLoading(true);
@@ -24,7 +24,10 @@ export function TextTester() {
         body: JSON.stringify({ text, xPosition: x, yPosition: y }),
       });
       setResult(JSON.stringify(await res.json(), null, 2));
-      if (res.ok) await list();
+      if (res.ok) {
+        await list();
+        router.refresh();
+      }
     } finally {
       setLoading(false);
     }
@@ -33,7 +36,7 @@ export function TextTester() {
   async function list() {
     const res = await fetch("/api/text");
     const body = await res.json();
-    if (res.ok) setRecords(body.records);
+    if (res.ok) setRecords(body.texts);
     else setResult(JSON.stringify(body, null, 2));
   }
 

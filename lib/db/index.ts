@@ -20,8 +20,13 @@ export const getDb = (): Kysely<DatabaseSchema> => {
 export interface DatabaseSchema {
   auth_state: AuthStateTable;
   auth_session: AuthSessionTable;
-  account: AccountTable;
-  status: StatusTable;
+  member: MemberTable;
+}
+
+export interface MemberTable {
+  did: string;
+  firstSeen: string;
+  lastSeen: string;
 }
 
 interface AuthStateTable {
@@ -34,17 +39,4 @@ interface AuthSessionTable {
   value: string;
 }
 
-export interface AccountTable {
-  did: string;
-  handle: string;
-  active: 0 | 1;
-}
 
-export interface StatusTable {
-  uri: string;
-  authorDid: string;
-  status: string;
-  createdAt: string;
-  indexedAt: string;
-  current: 0 | 1;
-}

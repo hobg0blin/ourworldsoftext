@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getOAuthClient } from "@/lib/auth/client";
+import { touchMember } from "@/lib/db/queries";
 
 const PUBLIC_URL = process.env.PUBLIC_URL || "http://127.0.0.1:3000";
 
@@ -10,6 +11,7 @@ export async function GET(request: NextRequest) {
 
     // Exchange code for session
     const { session } = await client.callback(params);
+    await touchMember(session.did);
 
     const response = NextResponse.redirect(new URL("/", PUBLIC_URL));
 
