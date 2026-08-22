@@ -1,59 +1,46 @@
-import { getSession } from "@/lib/auth/session";
-import { listWorldTexts } from "@/lib/world";
-import { LoginForm } from "@/components/LoginForm";
-import { LogoutButton } from "@/components/LogoutButton";
-import { TextTester } from "@/components/TextTester";
-import { TextList } from "@/components/TextList";
+import { getSession } from '@/lib/auth/session';
+import { listWorldTexts } from '@/lib/world';
+import { LoginForm } from '@/components/LoginForm';
+import { LogoutButton } from '@/components/LogoutButton';
+// import { TextTester } from "@/components/TextTester";
+import { Canvas } from '@/components/Canvas';
 
 export default async function Home() {
-  const session = await getSession();
-  const worldTexts = await listWorldTexts(session?.did);
-  const myTexts = session
-    ? worldTexts.filter((t) => t.authorDid === session.did)
-    : [];
+	const session = await getSession();
+	const worldTexts = await listWorldTexts(session?.did);
+	const myTexts = session
+		? worldTexts.filter((t: any) => t.authorDid === session.did)
+		: [];
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
-      <main className="w-full max-w-xl mx-auto p-8 space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-            Our World of Text
-          </h1>
-          <p className="text-zinc-600 dark:text-zinc-400">
-            PDS record test bench
-          </p>
-        </div>
+	return (
+		<div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+			<main className="w-full max-w-xl mx-auto p-8 space-y-6">
+				<div className="text-center">
+					<h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+						Our World of Text
+					</h1>
+					<p className="text-zinc-600 dark:text-zinc-400">
+						PDS record test bench
+					</p>
+				</div>
 
-        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
-          {session ? (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Signed in as {session.did}
-                </p>
-                <LogoutButton />
-              </div>
-              <TextTester />
-            </>
-          ) : (
-            <LoginForm />
-          )}
-        </div>
-
-        {session && (
-          <TextList
-            title="My text"
-            texts={myTexts}
-            empty="You haven't posted any text yet."
-          />
-        )}
-
-        <TextList
-          title="Everyone's text"
-          texts={worldTexts}
-          empty="Nothing in the world yet. Log in and post something."
-        />
-      </main>
-    </div>
-  );
+				<div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+					{session ? (
+						<>
+							<div className="flex items-center justify-between mb-4">
+								<p className="text-sm text-zinc-500 dark:text-zinc-400">
+									Signed in as {session.did}
+								</p>
+								<LogoutButton />
+							</div>
+							{/* <TextTester /> */}
+							<Canvas />
+						</>
+					) : (
+						<LoginForm />
+					)}
+				</div>
+			</main>
+		</div>
+	);
 }
