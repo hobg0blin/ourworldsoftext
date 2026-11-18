@@ -18,6 +18,7 @@ Goals:
 - Other digital ownership models - "buying land" in metaverse, NFTs, etc.
 - Who owns the web? Who owns this text? Where does it live? What is true?
 - What decisions am I still making from a BDFL/godlike perspective? What agency am I still taking from the user? (eg should they be able to edit their old texts by clicking into them, or should they be created as new ones?)
+- If primary mechanic is *theft*/encouraging people to build external tools, does the text interface still make the most sense? What else could the UI be?
 
 
 *FIXME* - initial draft mostly focused on finding center point of "minimum centralization, minimum effort, minimum expense" - becoming more open to tracking stuff locally as a way to show tradeoffs.
