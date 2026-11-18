@@ -2,8 +2,51 @@
 Goals: 
 - develop better understanding of full ecosystem
 - layer swappability (make composability visible, make different sources of truth optional). Ability to switch between jetstreams, switch between PDS & index as source of truth, self-hosted appview vs. pointer index, other options???
-- *option* to not have external dependencies wherever possible (eg can use the Bluesky jetstream, but would be nice to run my own as well, same with eventual integrations with microcosm/appview/whatever)
+- *option* to not have external dependencies wherever possible (eg can use the Bluesky jetstream, but would be nice to run my own as well, same with eventual integrations with microcosm/appview/whatever):w
 
+
+
+
+## About
+
+
+## Questions
+- Who is the arbiter of truth?
+- What are the weaknesses and strengths of each potential arbiter? What becomes apparent when you can switch them?
+- What are the different models of ownership & control of "digital space", both historically and available even within this app? How does it differ even based on how you choose to enforce timing, e.g. competing based on "last in" like r/place or YWOT vs. "first in".
+- Other digital ownership models - "buying land" in metaverse, NFTs, etc.
+- Who owns the web? Who owns this text? Where does it live? What is true?
+- What decisions am I still making from a BDFL/godlike perspective? What agency am I still taking from the user? (eg should they be able to edit their old texts by clicking into them, or should they be created as new ones?)
+
+
+*FIXME* - initial draft mostly focused on finding center point of "minimum centralization, minimum effort, minimum expense" - becoming more open to tracking stuff locally as a way to show tradeoffs.
+
+This is mostly a project I am building to explore/demonstrate some of the things I find interesting about atproto and decentralized data storage. I think the idea of credible exit/"own your own data" is really cool, and I am really curious about what that can afford us in terms of graphical or canvas-based data. If there were a lexicon for drawing software, what would it look like? How cool would it be if it were actually easy to leave Figma or whatever? But I don't want to deal with building and supporting actual canvas-based software, so I built this instead. It is a provocation that I hope will inspire atproto devs to think outside of text-based apps and pursue more creative/visual work, or inspire software artists to try building things on the protocol.
+
+But I also wanted it to serve as a way of demonstrating some of the parts of the protocol that are not as easy to understand (or at least, were not for me). If you're reading this, you're probably enough of a nerd to understand the basics of what a PDS is and what data ownership means in this context, but you might not have dug into how interacting with the atproto network actually works in practice: if there are multiple sources of truth, how do you reconcile them? How do you run a functional application that's dependent on a bunch of independent PDS operators? And, if you're philosophically interested in your data being *meaningfully decentralized*, how do you do that in practice? What does *meaningfully decentralized* even mean?
+
+
+The protocol's official way of handling this is using Jetstream and an AppView: basically you mirror all network records for your application locally, so you can treat the PDS as a source of truth without having to ping a thousand of them every time someone views your application. Jetstream listens to all online PDSes for new events, optionally filters them for only events that you're interested in, and then sends them to the AppView, which stores them for your application. That is a very short way of explaining some immensely complicated stuff: I've been following and intermittently writing about the protocol for almost a year and really only felt confident in my understanding after building this project. That usually means I'm wrong so feel free to correct me.
+
+
+The AppView is a perfectly good architectural concept and serves the needs of larger applications quite well, but it feels kind of like overkill for my silly little art project, at least for now, and I wanted to make sure what I'm building made it clear to both me and the user what's stored in the app and what data they *actually own*. I may add it as a swappable layer down the line, though. At any rate, at least in this v1, the application treats three different data sources as a source of truth, and allows users to explore the strengths and weaknesses of each one:
+
+1) The PDS
+2) The Jetstream
+3) A local database
+
+In many ways, right now it functions like Your World of Text, but with a couple key differences.
+
+1) All data is attached to a user's account - users "own" the text they write and even the worlds they create.
+2) This means all the data has an "owner", making each world more like digital real estate than just a new, different canvas.
+3) Because of the unique affordances of atproto, users can modify data without ever actually having to interact with the system, which creates a lot of interesting conflicts over ownership. By modifying the data directly in your PDS, you can overwrite and delete text, change behavior, and even "claim" a world someone else created without ever visiting the website.
+
+
+It is my hope that by making clear in the interface and behavior of this project that there are multiple sources of truth available, and by encouraging people to compete over resources and modify data outside the interface, it will help all of us understand a little better what it means for something to be "true" or for data to "belong" to someone. 
+
+
+
+## Technical Design
 Features:
 
 1) Sort/filter:
@@ -49,7 +92,7 @@ World creation (inside UI):
 5. Worker creates index row.
 
 World takeover/ownership change:
-1. new claim on existing name becomes owner
+1. new claim on existing name becomes owner (but must be made from somewhere other than the app interface)
 2. if a claim is deleted, ownership falls back to the most recent claim still marked as alive in the index
 3. retirement: once every claim on a name is dead, the name is retired forever. later claims are informed that this world has died.
 4. graveworlds: retired names appear in list, you can click through to see the dead world (just a faded version of the regular UI)
@@ -83,30 +126,6 @@ Holes/hackable stuff:
 - Back up SQLite file since claim history and arrival times can't be rebuilt (could we rebuild claim history at least just from the network? or is that too resource-intensive)
 
 
-
-## In Depth
-
-
-## TK/questions to answer
-- Who is the arbiter of truth?
-- What are the weaknesses and strengths of each potential arbiter? What becomes apparent when you can switch them?
-- What are the different models of ownership & control of "digital space", both historically and available even within this app? How does it differ even based on how you choose to enforce timing, e.g. competing based on "last in" like r/place or YWOT vs. "first in".
-- Other digital ownership models - "buying land" in metaverse, NFTs, etc.
-- Who owns the web? Who owns this text? Where does it live? What is true?
-- What decisions am I still making from a BDFL/godlike perspective? What agency am I still taking from the user? (eg should they be able to edit their old texts by clicking into them, or should they be created as new ones?)
-
-
-*FIXME* - initial draft mostly focused on finding center point of "minimum centralization, minimum effort, minimum expense" - becoming more open to tracking stuff locally as a way to show tradeoffs.
-
-This is mostly a project I am building to explore/demonstrate some of the things I find interesting about atproto and decentralized data storage. I think the idea of credible exit/"own your own data" is really cool, and I am really curious about what that can afford us in terms of graphical or canvas-based data. If there were a lexicon for drawing software, what would it look like? How cool would it be if it were actually easy to leave Figma or whatever? But I don't want to deal with building and supporting actual canvas-based software, so I built this instead. It is a provocation that I hope will inspire atproto devs to think outside of text-based apps and pursue more creative/visual work, or inspire software artists to try building things on the protocol.
-
-But I also wanted it to serve as a way of demonstrating some of the parts of the protocol that are not as easy to understand (or at least, were not for me). If you're reading this, you're probably enough of a nerd to understand the basics of what a PDS is and what data ownership means in this context, but you might not have dug into how interacting with the atproto network actually works in practice: if there are multiple sources of truth, how do you reconcile them? How do you run a functional application that's dependent on a bunch of independent PDS operators? And, if you're philosophically interested in your data being *meaningfully decentralized*, how do you do that in practice? What does *meaningfully decentralized* even mean?
-
-
-The protocol's official way of handling this is using Jetstream and an AppView: basically you mirror all network records for your application locally, so you can treat the PDS as a source of truth without having to ping a thousand of them every time someone views your application. Jetstream listens to all online PDSes for new events, optionally filters them for only events that you're interested in, and then sends them to the AppView, which stores them for your application. That is a very short way of explaining some immensely complicated stuff: I've been following and intermittently writing about the protocol for almost a year and really only felt confident in my understanding after building this project. That usually means I'm wrong so feel free to correct me.
-
-
-The AppView is a perfectly good architectural concept and serves the needs of larger applications quite well, but it feels kind of like overkill for my silly little art project, at least for now, and I wanted to make sure what I'm building made it clear to both me and the user what's stored in the app and what data they *actually own*. I may add it as a swappable layer down the line, though.
 
 #### Side notes/old draft stuff
 
