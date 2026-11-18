@@ -2,7 +2,8 @@
 Goals: 
 - develop better understanding of full ecosystem
 - layer swappability (make composability visible, make different sources of truth optional). Ability to switch between jetstreams, switch between PDS & index as source of truth, self-hosted appview vs. pointer index, other options???
-- *option* to not have external dependencies wherever possible (eg can use the Bluesky jetstream, but would be nice to run my own as well, same with eventual integrations with microcosm/appview/whatever):w
+- encourage users to modify their own PDS or build separate tools for modifying app-specific data - create functionalities and UI elements that *only* appear when the data is modified from outside of the app
+- *option* to not have external dependencies wherever possible (eg can use the Bluesky jetstream, but would be nice to run my own as well, same with eventual integrations with microcosm/appview/whatever)
 
 
 
